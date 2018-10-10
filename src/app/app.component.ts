@@ -77,4 +77,47 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.lastPosition.y = null;
   }
 
+
+
+  saveCanvas() {
+    console.log('CALLED01');
+
+    const imageType = 'image/png';
+    const fileName = 'sample.png';
+    // const canvas2 = document.getElementById('canvas');
+    const base64 = this.canvas.toDataURL(imageType);
+    const blob = this.dataURItoBlob(base64);
+
+    console.log(blob);
+    this.saveBlob(blob, fileName);
+  }
+
+  dataURItoBlob(dataURI) {
+    const imageType = 'image/png';
+    // DataURLのデータ部分をBase64からデコード
+    const binary = atob(dataURI.split(',')[1]);
+    const array = [];
+    // Arrayに 1 バイトずつ値を埋める
+    for ( let i = 0; i < binary.length; i++) {
+      array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: imageType});
+  }
+
+  saveBlob(blob, fileName) {
+    const url = (window.URL || window.webkitURL);
+    // ダウンロード用のURL作成
+    const dataUrl = url.createObjectURL(blob);
+    // イベント作成
+    const event = document.createEvent('MouseEvents');
+    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    // a要素を作成
+    const a = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+    // ダウンロード用のURLセット
+    a.href = dataUrl;
+    // ファイル名セット
+    a.download = fileName;
+    // イベントの発火
+    a.dispatchEvent(event);
+  }
 }
