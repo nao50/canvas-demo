@@ -1,5 +1,7 @@
 import {AfterViewInit, Component, DoCheck, ViewChild, OnInit, ElementRef} from '@angular/core';
 
+import { ImageService } from './services/image.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -13,15 +15,31 @@ export class AppComponent implements AfterViewInit, OnInit {
   lastPosition = { x: null, y: null };
   isDrag = false;
 
-
   context: CanvasRenderingContext2D = null;
   canvas: HTMLCanvasElement = null;
 
   @ViewChild('Canvas') Canvas: ElementRef;
+  @ViewChild('heroImage') image: ElementRef;
+
+  constructor(
+    private imageService: ImageService
+  ) {}
 
   ngOnInit() {
     this.lastPosition = { x: null, y: null };
   }
+
+  getPhoto() {
+    console.log(this.imageService.getImage());
+    return this.imageService.getImage();
+  }
+
+  // getPhoto() {
+  //   return this.imageService.getImage().subscribe(
+  //     response => {
+  //       console.log(response);
+  //     });
+  // }
 
   ngAfterViewInit() {
     this.canvas = this.Canvas.nativeElement;
@@ -89,7 +107,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     const blob = this.dataURItoBlob(base64);
 
     console.log(blob);
-    this.saveBlob(blob, fileName);
+    // this.saveBlob(blob, fileName);
   }
 
   dataURItoBlob(dataURI) {
@@ -104,20 +122,22 @@ export class AppComponent implements AfterViewInit, OnInit {
     return new Blob([new Uint8Array(array)], {type: imageType});
   }
 
-  saveBlob(blob, fileName) {
-    const url = (window.URL || window.webkitURL);
-    // ダウンロード用のURL作成
-    const dataUrl = url.createObjectURL(blob);
-    // イベント作成
-    const event = document.createEvent('MouseEvents');
-    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    // a要素を作成
-    const a = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
-    // ダウンロード用のURLセット
-    a.href = dataUrl;
-    // ファイル名セット
-    a.download = fileName;
-    // イベントの発火
-    a.dispatchEvent(event);
-  }
+  // saveBlob(blob, fileName) {
+  //   const url = window.URL;
+  //   // ダウンロード用のURL作成
+  //   const dataUrl = url.createObjectURL(blob);
+  //   // イベント作成
+  //   const event = document.createEvent('MouseEvents');
+  //   event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+  //   // a要素を作成
+  //   const a = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+  //   // ダウンロード用のURLセット
+  //   a.href = dataUrl;
+  //   // ファイル名セット
+  //   a.download = fileName;
+  //   // イベントの発火
+  //   a.dispatchEvent(event);
+  // }
+
+  
 }
